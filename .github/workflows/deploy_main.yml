@@ -1,0 +1,24 @@
+# $schema: https://json.schemastore.org/github-workflow.json
+
+name: "Deploy main Branch"
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: check-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/wrangler_deploy.yml
+    secrets: inherit
+    with:
+      environment: production

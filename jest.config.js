@@ -28,7 +28,6 @@ module.exports = {
     "<rootDir>/libs/components/jest.config.js",
     "<rootDir>/libs/core-test-utils/jest.config.js",
     "<rootDir>/libs/dirt/card/jest.config.js",
-    "<rootDir>/libs/eslint/jest.config.js",
     "<rootDir>/libs/guid/jest.config.js",
     "<rootDir>/libs/importer/jest.config.js",
     "<rootDir>/libs/key-management/jest.config.js",

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "tags": ["-lintignore"],
+  "workspaces": {
+    "./apps/web": {}
+  },
+  "webpack": {
+    "config": [
+      "**/webpack.base.{js,ts,mjs,cjs,mts,cts}",
+      "**/webpack.config.{js,ts,mjs,cjs,mts,cts}"
+    ]
+  },
+  "angular": {
+    "config": ["angular.json"]
+  },
+  "tailwind": {
+    "entry": ["tailwind.config.{js,cjs,mjs,ts}", "**/tailwind.config.{js,cjs,mjs,ts}"]
+  },
+  "postcss": {
+    "config": [
+      "package.json",
+      "**/package.json",
+      "postcss.config.json",
+      "**/postcss.config.json",
+      ".postcssrc",
+      "**/.postcssrc",
+      ".postcssrc.{json,ts,js,cjs,mjs,mts,cts,yaml,yml}",
+      "**/.postcssrc.{json,ts,js,cjs,mjs,mts,cts,yaml,yml}",
+      "postcss.config.{ts,js,cjs,mjs,mts,cts}",
+      "**/postcss.config.{ts,js,cjs,mjs,mts,cts}"
+    ]
+  },
+  "jest": {
+    "config": [
+      "package.json",
+      "**/package.json",
+      "jest.config.{js,ts,mjs,cjs,json}",
+      "**/jest.config.{js,ts,mjs,cjs,json}"
+    ],
+    "entry": [
+      "**/test.setup.ts",
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)",
+      "**/__mocks__/**/*.[jt]s?(x)"
+    ]
+  }
+}

@@ -26,13 +26,6 @@
     },
   ],
   "settings": {
-    "eslint.options": {
-      "overrideConfig": {
-        "parserOptions": {
-          "project": ["${workspaceFolder}/tsconfig.eslint.json"],
-        },
-      },
-    },
     "debug.javascript.terminalOptions": {
       "sourceMapPathOverrides": {
         "webpack:///./~/*": "${workspaceFolder:root}/node_modules/*",

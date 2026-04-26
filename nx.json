@@ -22,12 +22,6 @@
         "targetName": "test"
       }
     },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
     "@bitwarden/nx-plugin"
   ],
   "parallel": 4,

@@ -470,7 +470,7 @@ module.exports.buildConfig = function buildConfig(params) {
       ],
       fallback: {
         buffer: false,
-        util: require.resolve("util/"),
+        util: require.resolve("util"),
         assert: false,
         url: false,
         fs: false,
