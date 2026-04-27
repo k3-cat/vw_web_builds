@@ -54,9 +54,13 @@ export class BraintreeService {
    */
   loadBraintree(containerId: string, autoCreateDropin: boolean) {
     const script = window.document.createElement("script");
-    script.id = "dropin-script";
-    script.src = `scripts/dropin.js?cache=${process.env.CACHE_TAG}`;
-    script.async = true;
+    fetch(`/res/manifest.json?cache=${process.env.CACHE_TAG}`).then((res) =>
+      res.json().then((manifest) => {
+        script.id = "dropin-script";
+        script.src = `/assets/${manifest["scripts/dropin.js"]}`;
+        script.async = true;
+      }),
+    );
     if (autoCreateDropin) {
       script.onload = () => this.createDropin();
     }

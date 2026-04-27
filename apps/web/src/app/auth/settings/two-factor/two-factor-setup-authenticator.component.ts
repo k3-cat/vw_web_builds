@@ -118,9 +118,13 @@ export class TwoFactorSetupAuthenticatorComponent
       dialogService,
       toastService,
     );
-    this.qrScript = window.document.createElement("script");
-    this.qrScript.src = "scripts/qrious.min.js";
-    this.qrScript.async = true;
+    fetch(`/res/manifest.json?cache=${process.env.CACHE_TAG}`).then((res) =>
+      res.json().then((manifest) => {
+        this.qrScript = window.document.createElement("script");
+        this.qrScript.src = `/assets/${manifest["scripts/qrious.min.js"]}`;
+        this.qrScript.async = true;
+      }),
+    );
   }
 
   async ngOnInit() {

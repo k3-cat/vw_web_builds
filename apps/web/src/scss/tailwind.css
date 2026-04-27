@@ -74,10 +74,10 @@
     width: 128px;
   }
   .theme_light img.new-logo-themed {
-    content: url("../images/logo.svg");
+    content: url("../../public/images/logo.svg");
   }
   .theme_dark img.new-logo-themed {
-    content: url("../images/logo-white.svg");
+    content: url("../../public/images/logo-white.svg");
   }
 }
 

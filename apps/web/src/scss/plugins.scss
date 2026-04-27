@@ -13,11 +13,11 @@
 #bt-dropin-container {
   min-height: 50px;
   &:is(.theme_light *) {
-    background: url("../images/loading.svg") center center no-repeat;
+    background: url("../../public/images/loading.svg") center center no-repeat;
   }
 
   &:is(.theme_dark *) {
-    background: url("../images/loading-white.svg") center center no-repeat;
+    background: url("../../public/images/loading-white.svg") center center no-repeat;
   }
 }
 

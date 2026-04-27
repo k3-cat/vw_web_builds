@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { AngularWebpackPlugin } = require("@ngtools/webpack");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackInjector = require("html-webpack-injector");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -59,54 +60,62 @@ module.exports.buildConfig = function buildConfig(params) {
     {
       test: /\.(html)$/,
       loader: "html-loader",
+      options: {
+        sources: {
+          list: [
+            "...",
+            { tag: "video", attribute: "src", type: "src" },
+            { tag: "video", attribute: "appDarkImgSrc", type: "src" },
+          ],
+        },
+      },
     },
     {
       test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
       exclude: /loading(|-white).svg/,
-      generator: {
-        filename: "fonts/[name].[contenthash][ext]",
-      },
+      generator: { filename: "fonts/[name]-[contenthash][ext]" },
       type: "asset/resource",
     },
     {
       test: /\.(jpe?g|png|gif|svg|webp|avif)$/i,
       exclude: /.*(bwi-font)\.svg/,
-      generator: {
-        filename: "images/[name][ext]",
-      },
+      generator: { filename: "images/[name]-[contenthash][ext]" },
+      type: "asset/resource",
+    },
+    {
+      test: /\.(mp4)$/,
+      generator: { filename: "videos/[name]-[contenthash][ext]" },
+      type: "asset/resource",
+    },
+    {
+      test: /\.(json)$/,
+      exclude: /.*(messages|package)\.json/,
+      generator: { filename: "[name]-[contenthash][ext]" },
       type: "asset/resource",
     },
     {
       test: /\.scss$/,
       use: [
-        {
-          loader: MiniCssExtractPlugin.loader,
-        },
+        { loader: MiniCssExtractPlugin.loader },
         "css-loader",
         "resolve-url-loader",
         {
           loader: "sass-loader",
-          options: {
-            sourceMap: true,
-          },
+          options: { sourceMap: true },
         },
       ],
     },
     {
       test: /\.css$/,
       use: [
-        {
-          loader: MiniCssExtractPlugin.loader,
-        },
+        { loader: MiniCssExtractPlugin.loader },
         "css-loader",
         "resolve-url-loader",
         {
           loader: "postcss-loader",
           options: {
             sourceMap: true,
-            postcssOptions: {
-              config: path.resolve(__dirname, "postcss.config.js"),
-            },
+            postcssOptions: { config: path.resolve(__dirname, "postcss.config.js") },
           },
         },
       ],
@@ -131,87 +140,127 @@ module.exports.buildConfig = function buildConfig(params) {
   ];
 
   const plugins = [
+    new WebpackManifestPlugin({
+      fileName: "../res/manifest.json",
+      filter: (file) => {
+        return (
+          !file.isChunk &&
+          !file.isInitial &&
+          file.isAsset &&
+          !file.path.startsWith("..") &&
+          !file.name.includes("messages.json") &&
+          !file.name.endsWith(".html") &&
+          !file.name.endsWith(".map")
+        );
+      },
+    }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/index.html"),
-      filename: "index.html",
+      filename: "../index.html",
       chunks: ["theme_head", "app/polyfills", "app/vendor", "app/main", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackInjector(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/webauthn.html"),
-      filename: "webauthn-connector.html",
+      filename: "../webauthn-connector.html",
       chunks: ["connectors/webauthn", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/webauthn-mobile.html"),
-      filename: "webauthn-mobile-connector.html",
+      filename: "../webauthn-mobile-connector.html",
       chunks: ["connectors/webauthn", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/webauthn-fallback.html"),
-      filename: "webauthn-fallback-connector.html",
+      filename: "../webauthn-fallback-connector.html",
       chunks: ["connectors/webauthn-fallback", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/sso.html"),
-      filename: "sso-connector.html",
+      filename: "../sso-connector.html",
       chunks: ["connectors/sso", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/redirect.html"),
-      filename: "redirect-connector.html",
+      filename: "../redirect-connector.html",
       chunks: ["connectors/redirect", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/duo-redirect.html"),
-      filename: "duo-redirect-connector.html",
+      filename: "../duo-redirect-connector.html",
       chunks: ["connectors/duo-redirect", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/connectors/platform/proxy-cookie-redirect.html"),
-      filename: "proxy-cookie-redirect-connector.html",
+      filename: "../proxy-cookie-redirect-connector.html",
       chunks: ["connectors/platform/proxy-cookie-redirect", "styles"],
+      publicPath: "/assets",
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src/404.html"),
-      filename: "404.html",
+      filename: "../404.html",
       chunks: ["styles"],
-      // 404 page is a wildcard, this ensures it uses absolute paths.
-      publicPath: "/",
+      publicPath: "/assets",
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, "src/.nojekyll") },
-        { from: path.resolve(__dirname, "src/manifest.json") },
-        { from: path.resolve(__dirname, "src/favicon.ico") },
-        { from: path.resolve(__dirname, "src/browserconfig.xml") },
-        { from: path.resolve(__dirname, "src/app-id.json") },
-        { from: path.resolve(__dirname, "src/images"), to: "images" },
-        { from: path.resolve(__dirname, "src/images/icons"), to: "images" },
-        { from: path.resolve(__dirname, "src/videos"), to: "videos" },
-        { from: path.resolve(__dirname, "src/locales"), to: "locales" },
+        {
+          from: path.resolve(__dirname, "public/.nojekyll"),
+          to: path.resolve(params.outputPath),
+        },
+        {
+          from: path.resolve(__dirname, "public/favicon.ico"),
+          to: path.resolve(params.outputPath),
+        },
+        {
+          from: path.resolve(__dirname, "public/app-id.json"),
+          to: path.resolve(params.outputPath),
+        },
+        {
+          from: path.resolve(__dirname, "public/browserconfig.xml"),
+          to: path.resolve(params.outputPath),
+        },
+        {
+          from: path.resolve(__dirname, "public/locales/"),
+          to: path.resolve(params.outputPath, "res/locales/"),
+        },
+        {
+          from: path.resolve(__dirname, "public/icons"),
+          to: path.resolve(params.outputPath, "res/"),
+          filter: (path) => {
+            const filename = path.split("/").pop();
+            return filename.startsWith("android-chrome-") || filename.startsWith("mstile-");
+          },
+        },
         {
           from: path.resolve(__dirname, "../../node_modules/qrious/dist/qrious.min.js"),
-          to: "scripts",
+          to: path.resolve(params.outputPath, "assets/scripts/[name]-[contenthash][ext]"),
         },
         {
           from: path.resolve(
             __dirname,
             "../../node_modules/braintree-web-drop-in/dist/browser/dropin.js",
           ),
-          to: "scripts",
+          to: path.resolve(params.outputPath, "assets/scripts/[name]-[contenthash][ext]"),
         },
         {
           from: path.resolve(__dirname, "src/version.json"),
-          transform(content, path) {
-            return content.toString().replace("process.env.APPLICATION_VERSION", pjson.version);
-          },
+          to: path.resolve(params.outputPath, "version.json"),
+          transform: (content, _path) =>
+            content.toString().replace("process.env.APPLICATION_VERSION", pjson.version),
         },
       ],
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].[contenthash].css",
-      chunkFilename: "[id].[contenthash].css",
+      filename: "[name]-[contenthash].css",
+      chunkFilename: "[id]-[contenthash].css",
     }),
     new webpack.ProvidePlugin({
       process: "process/browser.js",
@@ -233,6 +282,9 @@ module.exports.buildConfig = function buildConfig(params) {
       tsconfig: params.tsConfig,
       entryModule: params.app.entryModule,
       sourceMap: true,
+    }),
+    new webpack.DefinePlugin({
+      "__webpack_require__.p": JSON.stringify("/assets"),
     }),
   ];
 
@@ -377,7 +429,7 @@ module.exports.buildConfig = function buildConfig(params) {
           allowedHosts: envConfig.dev?.allowedHosts ?? "auto",
           static: {
             directory: path.resolve(params.outputPath),
-            publicPath: "/",
+            publicPath: "/assets",
           },
           devMiddleware: {
             // when running `serve` locally this option writes all built files to `dist`
@@ -398,26 +450,19 @@ module.exports.buildConfig = function buildConfig(params) {
     devtool: "source-map",
     devServer: devServer,
     target: "web",
+    context: path.resolve(__dirname),
     entry: {
-      "app/polyfills": path.resolve(__dirname, "src/polyfills.ts"),
+      "app/polyfills": "./src/polyfills.ts",
       "app/main": params.app.entry,
-      "connectors/webauthn": path.resolve(__dirname, "src/connectors/webauthn.ts"),
-      "connectors/webauthn-fallback": path.resolve(
-        __dirname,
-        "src/connectors/webauthn-fallback.ts",
-      ),
-      "connectors/sso": path.resolve(__dirname, "src/connectors/sso.ts"),
-      "connectors/duo-redirect": path.resolve(__dirname, "src/connectors/duo-redirect.ts"),
-      "connectors/redirect": path.resolve(__dirname, "src/connectors/redirect.ts"),
-      "connectors/platform/proxy-cookie-redirect": path.resolve(
-        __dirname,
-        "src/connectors/platform/proxy-cookie-redirect.ts",
-      ),
-      styles: [
-        path.resolve(__dirname, "src/scss/styles.scss"),
-        path.resolve(__dirname, "src/scss/tailwind.css"),
-      ],
-      theme_head: path.resolve(__dirname, "src/theme.ts"),
+      "connectors/webauthn": "./src/connectors/webauthn.ts",
+      "connectors/webauthn-fallback": "./src/connectors/webauthn-fallback.ts",
+      "connectors/sso": "./src/connectors/sso.ts",
+      "connectors/duo-redirect": "./src/connectors/duo-redirect.ts",
+      "connectors/redirect": "./src/connectors/redirect.ts",
+      "connectors/platform/proxy-cookie-redirect":
+        "./src/connectors/platform/proxy-cookie-redirect.ts",
+      styles: ["./src/scss/styles.scss", "./src/scss/tailwind.css"],
+      theme_head: "./src/theme.ts",
     },
     cache:
       NODE_ENV === "production"
@@ -425,10 +470,8 @@ module.exports.buildConfig = function buildConfig(params) {
         : {
             type: "filesystem",
             allowCollectingMemory: true,
-            cacheDirectory: path.resolve(__dirname, "../../node_modules/.cache/webpack"),
-            buildDependencies: {
-              config: [__filename],
-            },
+            cacheDirectory: "../../node_modules/.cache/webpack",
+            buildDependencies: { config: [__filename] },
           },
     snapshot: {
       unmanagedPaths: [path.resolve(__dirname, "../../node_modules/@bitwarden/")],
@@ -439,9 +482,7 @@ module.exports.buildConfig = function buildConfig(params) {
           commons: {
             test: /[\\/]node_modules[\\/]/,
             name: "app/vendor",
-            chunks: (chunk) => {
-              return chunk.name === "app/main";
-            },
+            chunks: (chunk) => chunk.name === "app/main",
           },
         },
       },
@@ -452,10 +493,7 @@ module.exports.buildConfig = function buildConfig(params) {
             safari10: true,
             // Replicate Angular CLI behaviour
             compress: {
-              global_defs: {
-                ngDevMode: false,
-                ngI18nClosureMode: false,
-              },
+              global_defs: { ngDevMode: false, ngI18nClosureMode: false },
             },
           },
         }),
@@ -464,10 +502,7 @@ module.exports.buildConfig = function buildConfig(params) {
     resolve: {
       extensions: [".ts", ".js"],
       symlinks: false,
-      modules: [
-        path.resolve(__dirname, "../../node_modules"),
-        path.resolve(process.cwd(), "node_modules"),
-      ],
+      modules: ["../../node_modules", path.resolve(process.cwd(), "node_modules")],
       fallback: {
         buffer: false,
         util: require.resolve("util"),
@@ -480,8 +515,8 @@ module.exports.buildConfig = function buildConfig(params) {
       alias: params.importAliases,
     },
     output: {
-      filename: "[name].[contenthash].js",
-      path: params.outputPath,
+      filename: "scripts/[name]-[contenthash].js",
+      path: path.resolve(params.outputPath, "assets"),
       clean: true,
     },
     module: {

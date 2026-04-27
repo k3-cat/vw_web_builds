@@ -46,12 +46,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/web",
+            "outputPath": "apps/web/build",
             "index": "apps/web/src/index.html",
             "main": "apps/web/src/main.ts",
             "polyfills": "apps/web/src/polyfills.ts",
             "tsConfig": "apps/web/tsconfig.json",
-            "assets": ["apps/web/src/favicon.ico"],
+            "assets": ["apps/web/public/favicon.ico"],
             "styles": [],
             "scripts": []
           }
