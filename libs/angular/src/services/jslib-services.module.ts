@@ -471,7 +471,7 @@ const safeProviders: SafeProvider[] = [
   }),
   safeProvider({
     provide: LOCALES_DIRECTORY,
-    useValue: "./locales",
+    useValue: "/res/locales",
   }),
   safeProvider({
     provide: SYSTEM_LANGUAGE,

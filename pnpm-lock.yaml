@@ -279,6 +279,9 @@ importers:
       webpack-dev-server:
         specifier: 5.2.2
         version: 5.2.2(bufferutil@4.1.0)(tslib@2.8.1)(utf-8-validate@6.0.5)(webpack-cli@6.0.1)(webpack@5.104.1)
+      webpack-manifest-plugin:
+        specifier: ^6.0.1
+        version: 6.0.1(webpack@5.104.1)
       wrangler:
         specifier: ^4.86.0
         version: 4.86.0(bufferutil@4.1.0)(utf-8-validate@6.0.5)
@@ -9063,6 +9066,12 @@ packages:
         optional: true
       webpack-cli:
         optional: true
+
+  webpack-manifest-plugin@6.0.1:
+    resolution: {integrity: sha512-R0p/8/IJVY5hIhQtkeWUQugalVpIwojc09eb14zGq+oiZOCmN5paAz2NBJfd+6v9eBbxAS3YMjc2ov8UMlCDLQ==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      webpack: ^5.75.0
 
   webpack-merge@6.0.1:
     resolution: {integrity: sha512-hXXvrjtx2PLYx4qruKl+kyRSLc52V+cCvMxRjmKwoA+CBbbF5GfIBtR6kCvl0fYGqTUPKB+1ktVmTHqMOzgCBg==}
@@ -20305,6 +20314,12 @@ snapshots:
       - supports-color
       - tslib
       - utf-8-validate
+
+  webpack-manifest-plugin@6.0.1(webpack@5.104.1):
+    dependencies:
+      tapable: 2.3.3
+      webpack: 5.104.1(@swc/core@1.15.30)(esbuild@0.28.0)(webpack-cli@6.0.1)
+      webpack-sources: 3.4.0
 
   webpack-merge@6.0.1:
     dependencies:

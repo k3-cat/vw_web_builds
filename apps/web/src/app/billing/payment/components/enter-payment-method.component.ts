@@ -91,7 +91,7 @@ type PaymentMethodFormGroup = FormGroup<{
             </div>
             <div class="tw-col-span-1 tw-flex tw-items-end">
               <img
-                src="../../../images/cards.png"
+                src="../../../../../public/images/cards.png"
                 alt="Visa, MasterCard, Discover, AmEx, JCB, Diners Club, UnionPay"
                 class="tw-max-w-full"
               />

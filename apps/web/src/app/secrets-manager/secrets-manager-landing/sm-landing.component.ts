@@ -22,7 +22,7 @@ import { SharedModule } from "../../shared/shared.module";
 export class SMLandingComponent implements OnInit {
   tryItNowUrl: string;
   learnMoreUrl: string = "https://bitwarden.com/help/secrets-manager-overview/";
-  imageSrc: string = "../images/sm.webp";
+  imageSrc: string = "../../../public/images/sm.webp";
   showSecretsManagerInformation: boolean = true;
   showGiveMembersAccessInstructions: boolean = false;
 
@@ -82,7 +82,7 @@ export class SMLandingComponent implements OnInit {
     this.showSecretsManagerInformation = false;
     this.learnMoreUrl =
       "https://bitwarden.com/help/secrets-manager-quick-start/#give-members-access";
-    this.imageSrc = "../images/sm-give-access.png";
+    this.imageSrc = "../../../public/images/sm-give-access.png";
     this.tryItNowUrl = `/organizations/${orgId}/members`;
   }
 }
