@@ -8,6 +8,7 @@ const HtmlWebpackInjector = require("html-webpack-injector");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const FaroSourceMapUploaderPlugin = require("@grafana/faro-webpack-plugin");
 const webpack = require("webpack");
 
 const config = require(path.resolve(__dirname, "config.js"));
@@ -283,7 +284,19 @@ module.exports.buildConfig = function buildConfig(params) {
       entryModule: params.app.entryModule,
       sourceMap: true,
     }),
+    new FaroSourceMapUploaderPlugin({
+      appName: "web-vault",
+      endpoint: process.env.FARO_ENDPOINT,
+      appId: process.env.FARO_APP_ID,
+      stackId: process.env.FARO_STACK_ID,
+      apiKey: process.env.FARO_API_KEY,
+      recursive: true,
+      verbose: true,
+      gzipContents: true,
+    }),
     new webpack.DefinePlugin({
+      "process.env.VITE_FARO_DSN": JSON.stringify(process.env.VITE_FARO_DSN),
+      "process.env.VITE_CLARITY_ID": JSON.stringify(process.env.VITE_CLARITY_ID),
       "__webpack_require__.p": JSON.stringify("/assets"),
     }),
   ];
