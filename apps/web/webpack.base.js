@@ -507,6 +507,7 @@ module.exports.buildConfig = function buildConfig(params) {
     devtool: "source-map",
     devServer: devServer,
     target: "web",
+    bail: true,
     context: path.resolve(__dirname),
     entry: {
       "app/polyfills": "./src/polyfills.ts",
