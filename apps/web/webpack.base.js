@@ -6,6 +6,7 @@ const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackInjector = require("html-webpack-injector");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CspHtmlWebpackPlugin = require("csp-html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const FaroSourceMapUploaderPlugin = require("@grafana/faro-webpack-plugin");
@@ -284,6 +285,49 @@ module.exports.buildConfig = function buildConfig(params) {
       entryModule: params.app.entryModule,
       sourceMap: true,
     }),
+    new CspHtmlWebpackPlugin(
+      {
+        "default-src": ["'self'"],
+        "base-uri": ["'self'"],
+        "object-src": ["'self'", "blob:"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "c.clarity.ms",
+          "c.bing.com",
+          "https://haveibeenpwned.com",
+          "https://icons.duckduckgo.com/ip3/",
+        ],
+        "frame-src": [
+          "'self'",
+          "*.clarity.ms",
+          "challenges.cloudflare.com",
+          "https://*.duosecurity.com",
+          "https://*.duofederal.com",
+        ],
+        "script-src-elem": [
+          "'self'",
+          "'wasm-unsafe-eval'",
+          "*.clarity.ms",
+          "challenges.cloudflare.com",
+          "static.cloudflareinsights.com",
+        ],
+        "connect-src": [
+          "'self'",
+          "*.grafana.net",
+          "*.clarity.ms",
+          "cloudflareinsights.com",
+          "https://api.pwnedpasswords.com",
+          "https://api.2fa.directory",
+        ],
+      },
+      {
+        hashingMethod: "sha256",
+        hashEnabled: { "script-src": true, "style-src": false },
+        nonceEnabled: { "script-src": false, "style-src": false },
+      },
+    ),
     new FaroSourceMapUploaderPlugin({
       appName: "web-vault",
       endpoint: process.env.FARO_ENDPOINT,
