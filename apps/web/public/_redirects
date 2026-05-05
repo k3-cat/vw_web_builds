@@ -1,0 +1,9 @@
+/css/vaultwarden.css {domain}/css/vaultwarden.css 308
+/images/icon-white.svg /res/icon-white.svg 200
+/app-id.json {domain}/app-id.json 308
+/api/* {domain}/api/:splat 308
+/events/* {domain}/events/:splat 308
+/identity/* {domain}/identity/:splat 308
+/notifications/* {domain}/notifications/:splat 308
+/attachments/* {domain}/attachments/:splat 307
+/icons/:name/icon.png https://icons.duckduckgo.com/ip3/:name.ico 301

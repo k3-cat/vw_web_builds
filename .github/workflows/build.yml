@@ -10,14 +10,6 @@ jobs:
     name: Build web-vault
     runs-on: ubuntu-latest
 
-    env:
-      FARO_API_KEY: ${{ secrets.FARO_API_KEY }}
-      FARO_APP_ID: ${{ vars.FARO_APP_ID }}
-      FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
-      FARO_STACK_ID: ${{ vars.FARO_STACK_ID }}
-      VITE_FARO_DSN: ${{ vars.VITE_FARO_DSN }}
-      VITE_CLARITY_ID: ${{ vars.VITE_CLARITY_ID }}
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -36,6 +28,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run pnpm build
+        env:
+          VW_DOMAIN: ${{ secrets.VW_DOMAIN }}
+          FARO_API_KEY: ${{ secrets.FARO_API_KEY }}
+          FARO_APP_ID: ${{ vars.FARO_APP_ID }}
+          FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
+          FARO_STACK_ID: ${{ vars.FARO_STACK_ID }}
+          VITE_FARO_DSN: ${{ vars.VITE_FARO_DSN }}
+          VITE_CLARITY_ID: ${{ vars.VITE_CLARITY_ID }}
         run: pnpm --filter @bitwarden/web-vault run build:oss:selfhost:prod
 
       - name: Set short git commit SHA
