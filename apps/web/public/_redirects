@@ -1,0 +1,2 @@
+/images/icon-white.svg /res/icon-white.svg 200
+/icons/:name/icon.png https://icons.duckduckgo.com/ip3/:name.ico 301

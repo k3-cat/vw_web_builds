@@ -48,7 +48,7 @@ const DEFAULT_PARAMS = {
  *  importAliases?: import("webpack").ResolveOptions["alias"];
  * }} params
  */
-module.exports.buildConfig = function buildConfig(params) {
+module.exports.buildConfig = async function buildConfig(params) {
   params = { ...DEFAULT_PARAMS, ...params };
   const { ENV, NODE_ENV, LOGGING } = module.exports.getEnv(params);
 
@@ -214,15 +214,11 @@ module.exports.buildConfig = function buildConfig(params) {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "public/.nojekyll"),
+          from: path.resolve(__dirname, "public/_headers"),
           to: path.resolve(params.outputPath),
         },
         {
           from: path.resolve(__dirname, "public/favicon.ico"),
-          to: path.resolve(params.outputPath),
-        },
-        {
-          from: path.resolve(__dirname, "public/app-id.json"),
           to: path.resolve(params.outputPath),
         },
         {
@@ -234,11 +230,19 @@ module.exports.buildConfig = function buildConfig(params) {
           to: path.resolve(params.outputPath, "res/locales/"),
         },
         {
+          from: path.resolve(__dirname, "public/images/icon-white.svg"),
+          to: path.resolve(params.outputPath, "res/"),
+        },
+        {
           from: path.resolve(__dirname, "public/icons"),
           to: path.resolve(params.outputPath, "res/"),
           filter: (path) => {
             const filename = path.split("/").pop();
-            return filename.startsWith("android-chrome-") || filename.startsWith("mstile-");
+            return (
+              filename.startsWith("android-chrome-") ||
+              filename.startsWith("mstile-") ||
+              filename === "icon-white.svg"
+            );
           },
         },
         {
@@ -253,10 +257,16 @@ module.exports.buildConfig = function buildConfig(params) {
           to: path.resolve(params.outputPath, "assets/scripts/[name]-[contenthash][ext]"),
         },
         {
-          from: path.resolve(__dirname, "src/version.json"),
-          to: path.resolve(params.outputPath, "version.json"),
+          from: path.resolve(__dirname, "public/version.json"),
+          to: path.resolve(params.outputPath),
           transform: (content, _path) =>
             content.toString().replace("process.env.APPLICATION_VERSION", pjson.version),
+        },
+        {
+          from: path.resolve(__dirname, "public/_redirects"),
+          to: path.resolve(params.outputPath),
+          transform: (content, _path) =>
+            content.toString().replaceAll("{domain}", process.env.VW_DOMAIN),
         },
       ],
     }),
@@ -290,7 +300,7 @@ module.exports.buildConfig = function buildConfig(params) {
         "default-src": ["'self'"],
         "base-uri": ["'self'"],
         "object-src": ["'self'", "blob:"],
-        "style-src": ["'self'", "'unsafe-inline'"],
+        "style-src": ["'self'", "'unsafe-inline'", process.env.VW_DOMAIN],
         "img-src": [
           "'self'",
           "data:",
@@ -309,6 +319,7 @@ module.exports.buildConfig = function buildConfig(params) {
         "script-src-elem": [
           "'self'",
           "'wasm-unsafe-eval'",
+          "'unsafe-inline'",
           "*.clarity.ms",
           "challenges.cloudflare.com",
           "static.cloudflareinsights.com",
@@ -318,6 +329,7 @@ module.exports.buildConfig = function buildConfig(params) {
           "*.grafana.net",
           "*.clarity.ms",
           "cloudflareinsights.com",
+          process.env.VW_DOMAIN,
           "https://api.pwnedpasswords.com",
           "https://api.2fa.directory",
         ],
